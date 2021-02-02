@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.androidapp.diaryapp.databinding.ActivityMainBinding
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import io.realm.Realm
 import java.text.DateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -25,6 +26,8 @@ class MainActivity : AppCompatActivity() {
 
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        Realm.init(this)
 
         val calendarView = binding.calendarView
         val rcViewTime = binding.rcViewTime

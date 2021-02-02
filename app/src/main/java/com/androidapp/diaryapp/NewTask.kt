@@ -1,8 +1,7 @@
 package com.androidapp.diaryapp
 
-import android.annotation.SuppressLint
+
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.view.View
 import android.widget.CalendarView
 import android.widget.EditText
@@ -10,11 +9,11 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.androidapp.diaryapp.databinding.ActivityAddNewTaskBinding
-import org.json.JSONArray
-import java.text.SimpleDateFormat
-import java.util.*
-import com.google.gson.GsonBuilder
-import java.io.*
+import io.realm.Realm
+import io.realm.RealmConfiguration
+import io.realm.kotlin.createObject
+
+
 
 
 class NewTask: AppCompatActivity() {
@@ -25,14 +24,18 @@ class NewTask: AppCompatActivity() {
     lateinit var etTaskDescription:EditText
     lateinit var calendarViewNewTask: CalendarView
     var selectedDate:String = ""
-    var dataFileName = "raw/data.json"
+    lateinit var cFCalculator:ComFunCalculator
+
+
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         val binding = ActivityAddNewTaskBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
         etTaskName = binding.etNewTaskName
         sTaskTime = binding.sNewTaskTime
@@ -45,7 +48,7 @@ class NewTask: AppCompatActivity() {
 
     }
     fun onClickSaveNewTask(view: View){
-        if(selectedDate!="") {
+        if(selectedDate != "") {
             saveTask()
         }
         else{
@@ -54,21 +57,40 @@ class NewTask: AppCompatActivity() {
 //        Toast.makeText(this, , Toast.LENGTH_SHORT).show()
     }
 
-    @Suppress("DEPRECATION")
     private fun saveTask(){
+        Realm.init(this)
+        var config = RealmConfiguration.Builder().name("database1.realm").build()
+        val realm = Realm.getInstance(config)
 
-        val taskId = giveId(getJsonString())
+        val taskId = cFCalculator.giveId(realm)
         val taskName = etTaskName.text.toString().trim()
         val taskTime = sTaskTime.selectedItem.toString().trim()
-        val taskTimeStart = dateTimeToMillis(selectedDate, splitTaskTime(taskTime)[0]).toString()
-        val taskTimeFinish = dateTimeToMillis(selectedDate, splitTaskTime(taskTime)[1]).toString()
+        val taskTimeStart = cFCalculator.dateTimeToMillis(selectedDate, cFCalculator.splitTaskTime(taskTime)[0]).toString()
+        val taskTimeFinish = cFCalculator.dateTimeToMillis(selectedDate, cFCalculator.splitTaskTime(taskTime)[1]).toString()
         val taskDescription = etTaskDescription.text.toString().trim()
+
         if(taskName.isEmpty()){
             etTaskName.error = "Введите название дела"
             return
         }
-        val task = Task(taskId, taskTimeStart, taskTimeFinish , taskName, taskDescription)
-        val jsonObjTask = task.toJSON()
+
+        realm.beginTransaction()
+
+        val taskObject = realm.createObject<TaskRealmObjClass>()
+        taskObject.id = taskId
+        taskObject.date_start = taskTimeStart
+        taskObject.date_finish = taskTimeFinish
+        taskObject.name = taskName
+        taskObject.description = taskDescription
+        realm.copyFromRealm(taskObject)
+
+        realm.commitTransaction()
+
+
+
+//        val task = TaskKotlinClass(0, taskTimeStart, taskTimeFinish, taskName, taskDescription)
+//        val jsonString = GsonBuilder().setPrettyPrinting().create().toJson(task.toJSON())
+
 
 //        val jsonString = ObjectMapper().writeValueAsString(task)
 //        val imputStream = assets.open(dataFileName)
@@ -80,95 +102,21 @@ class NewTask: AppCompatActivity() {
 //        File("Database.json").writeText(jsonList)
 
 
-        val gsonPretty = GsonBuilder().setPrettyPrinting().create()
-        val jsonStringPretty:String = gsonPretty.toJson(jsonObjTask)
-        jsonWriter(jsonStringPretty)
+//        val gsonPretty = GsonBuilder().setPrettyPrinting().create()
+//        val jsonStringPretty:String = gsonPretty.toJson(jsonObjTask)
+//        jsonWriter(jsonStringPretty)
 
-
-    }
-    private fun giveId(jsonString: String):Int{
-        try {
-            val jsonArr = JSONArray(jsonString)
-            var maxId = 0
-            var objId: Int
-
-            for (i in 0 until jsonArr.length()) {
-                objId = jsonArr.getJSONObject(i).getInt("id")
-                if (objId > maxId) maxId = objId
-            }
-            return maxId + 1
-        }
-        catch (e:IOException){
-            return 0
-        }
     }
 
 
-    private fun getJsonString():String {
+//    private fun createRealmObj(id:Int, date_start:String, date_finish:String, name:String, description:String){
+//        val realm = Realm.getInstance(config)
+//        val task = TaskRealmObjClass(id, date_start, date_finish, name, description)
+//        realm.copyToRealm(task)
+//        realm.close()
+//    }
 
 
-//        var json = String()
-//            val  inputStream:InputStream = assets.open(dataFileName)
-//            json = inputStream.bufferedReader().use{it.readText()}
-//        return json
-
-
-//        val file = File(context.filesDir, dataFileName)
-//        val fileReader = FileReader(file)
-//        val bufferedReader = BufferedReader(fileReader)
-//        val stringBuilder = StringBuilder()
-//        var line = bufferedReader.readLine()
-//        while(line!=null){
-//            stringBuilder.append(line).append("\n")
-//            line = bufferedReader.readLine()
-//        }
-//        bufferedReader.close()
-//        return stringBuilder.toString()
-
-        val file = R.raw.data
-        val reader = this.resources.openRawResource(file).reader()
-        val jsonString = reader.readText()
-        return jsonString
-
-
-//        val file = File("src/data.json")
-//        println("Attempting to read from file in: "+ Environment.getDataDirectory())
-//        try {
-//            val reader = file.canonicalFile.reader()
-//        }catch (e:IOException){
-//            e.printStackTrace()
-//        }
-//        return ""
-    }
-
-    private fun jsonWriter(jsonString:String){
-        var fileOutput = openFileOutput(dataFileName, MODE_PRIVATE)
-        val outputWriter = OutputStreamWriter(fileOutput)
-        outputWriter.write(jsonString)
-        outputWriter.close()
-    }
-
-    private fun splitTaskTime(rangeString: String): List<String> {
-        rangeString.replace(" ", "")
-        return rangeString.split("-")
-    }
-
-    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-    @SuppressLint("SimpleDateFormat")
-    private fun dateTimeToMillis(dateString:String, timeString:String):Long? {
-        val givenDateString = "$dateString $timeString"
-        val sdf = SimpleDateFormat("dd-MM-yyyy HH:mm")
-        var timeMilliseconds:Long
-        try{
-            val date: Date = sdf.parse(givenDateString)
-            timeMilliseconds = date.time
-            return timeMilliseconds
-        }
-        catch (e:IOException){
-            e.printStackTrace()
-            return null
-        }
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState?.run {
