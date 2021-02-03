@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 
 class MyAdapter(listArray:ArrayList<ListItem>, context: Context): RecyclerView.Adapter<MyAdapter.ViewHolder>(){
@@ -15,16 +14,17 @@ class MyAdapter(listArray:ArrayList<ListItem>, context: Context): RecyclerView.A
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
-        val tvTime= view.findViewById<TextView>(R.id.tvTime)
+        val tvTime = view.findViewById<TextView>(R.id.tvTime)
         val tvText = view.findViewById<TextView>(R.id.tvText)
 
         fun bind(listItem: ListItem,context: Context){
             tvTime.text = listItem.time
-            tvText.text = listItem.text
+            tvText.text = listItem.name
             itemView.setOnClickListener(){
                 var intent = Intent(context, AboutTask::class.java).apply {
                     putExtra("Time", tvTime.text.toString())
                     putExtra("Name", tvText.text.toString())
+                    putExtra("id", listItem.id)
                 }
                 context.startActivity(intent)
 

@@ -69,18 +69,32 @@ import java.util.*
 
     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     @SuppressLint("SimpleDateFormat")
-    open fun dateTimeToMillis(dateString:String, timeString:String):Long? {
-        val givenDateString = "$dateString $timeString"
-        val sdf = SimpleDateFormat("dd-MM-yyyy HH:mm")
-        var timeMilliseconds:Long
-        try{
-            val date: Date = sdf.parse(givenDateString)
-            timeMilliseconds = date.time
-            return timeMilliseconds
-        }
-        catch (e: IOException){
-            e.printStackTrace()
-            return null
+    open fun dateTimeToMillis(dateString:String, timeString:String?):Long? {
+        val givenDateString:String
+        var sdf = SimpleDateFormat()
+        val timeMilliseconds: Long
+        if (timeString!=null) {
+            givenDateString = "$dateString $timeString"
+            sdf = SimpleDateFormat("dd-MM-yyyy HH:mm")
+            try {
+                val date: Date = sdf.parse(givenDateString)
+                timeMilliseconds = date.time
+                return timeMilliseconds
+            } catch (e: IOException) {
+                e.printStackTrace()
+                return null
+            }
+        }else {
+            sdf = SimpleDateFormat("dd-MM-yyyy")
+            try {
+                val date: Date = sdf.parse(dateString)
+                timeMilliseconds = date.time
+                return timeMilliseconds
+            } catch (e: IOException) {
+                e.printStackTrace()
+                return null
+            }
+
         }
     }
 

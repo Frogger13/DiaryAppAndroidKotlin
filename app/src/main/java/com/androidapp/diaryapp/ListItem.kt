@@ -1,6 +1,16 @@
 package com.androidapp.diaryapp
 
-data class ListItem (
-    var time:String,
-    var text:String
-)
+ class ListItem {
+    var id:Int? = 0
+    var time: String = ""
+    var name: String = ""
+    constructor(id:Int?, time:String, name:String){
+        this.id = id
+        this.time = time
+        this.name = name
+    }
+    constructor(time:String, name:String){
+        this.time = time
+        this.name = name
+    }
+}

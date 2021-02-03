@@ -14,8 +14,6 @@ import io.realm.RealmConfiguration
 import io.realm.kotlin.createObject
 
 
-
-
 class NewTask: AppCompatActivity() {
     private lateinit var binding: AppCompatActivity
 
@@ -24,7 +22,7 @@ class NewTask: AppCompatActivity() {
     lateinit var etTaskDescription:EditText
     lateinit var calendarViewNewTask: CalendarView
     var selectedDate:String = ""
-    lateinit var cFCalculator:ComFunCalculator
+    var cFCalculator = ComFunCalculator()
 
 
 
@@ -59,14 +57,21 @@ class NewTask: AppCompatActivity() {
 
     private fun saveTask(){
         Realm.init(this)
-        var config = RealmConfiguration.Builder().name("database1.realm").build()
+        var config = RealmConfiguration.Builder().name("realmDB.realm").build()
         val realm = Realm.getInstance(config)
 
         val taskId = cFCalculator.giveId(realm)
         val taskName = etTaskName.text.toString().trim()
         val taskTime = sTaskTime.selectedItem.toString().trim()
-        val taskTimeStart = cFCalculator.dateTimeToMillis(selectedDate, cFCalculator.splitTaskTime(taskTime)[0]).toString()
-        val taskTimeFinish = cFCalculator.dateTimeToMillis(selectedDate, cFCalculator.splitTaskTime(taskTime)[1]).toString()
+        val taskTimeStart = cFCalculator.dateTimeToMillis(selectedDate, cFCalculator.splitTaskTime(taskTime)[0])
+        var taskTimeFinish:Long
+        if (taskTime=="23:00 - 00:00"){
+            taskTimeFinish = cFCalculator.dateTimeToMillis(selectedDate, cFCalculator.splitTaskTime(taskTime)[1])!! + 86400000
+        }
+        else{
+            taskTimeFinish = cFCalculator.dateTimeToMillis(selectedDate, cFCalculator.splitTaskTime(taskTime)[1])!!
+        }
+
         val taskDescription = etTaskDescription.text.toString().trim()
 
         if(taskName.isEmpty()){
