@@ -18,8 +18,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".NewTask"></activity>
-        <activity android:name=".AboutTask"></activity>
+        <activity android:name=".PresenterNewTaskActivity"></activity>
+        <activity android:name=".PresenterAboutTaskActivity"></activity>
     </application>
 
 </manifest>

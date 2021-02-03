@@ -9,7 +9,6 @@ import com.androidapp.diaryapp.databinding.ActivityMainBinding
 import com.google.firebase.database.DatabaseReference
 import io.realm.Realm
 import io.realm.RealmConfiguration
-import io.realm.RealmList
 import io.realm.kotlin.where
 import kotlin.collections.ArrayList
 
@@ -17,7 +16,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: AppCompatActivity
     private lateinit var database: DatabaseReference
-    var adapter:MyAdapter?=null
+    var adapterRcView:AdapterRcView?=null
     var selectedDate:String = ""
     var cFCalculator = ComFunCalculator()
 
@@ -34,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 
         calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
             selectedDate = "$dayOfMonth-${month + 1}-$year"
-            adapter!!.updateAdapter(updateArrayListItem())
+            adapterRcView!!.updateAdapter(updateArrayListItem())
         }
 
         var list = ArrayList<ListItem>()
@@ -42,8 +41,8 @@ class MainActivity : AppCompatActivity() {
 
         rcViewTime.hasFixedSize()
         rcViewTime.layoutManager = LinearLayoutManager(this)
-        adapter = MyAdapter(list,this)
-        rcViewTime.adapter = adapter
+        adapterRcView = AdapterRcView(list,this)
+        rcViewTime.adapter = adapterRcView
     }
 
     fun fillArray(timeArray:Array<String>, descriptionArray:Array<String>):List<ListItem>{
@@ -119,7 +118,7 @@ class MainActivity : AppCompatActivity() {
 
 
     fun onClickAddNewTask(view: View){
-        val intent = Intent(this,NewTask::class.java)
+        val intent = Intent(this,PresenterNewTaskActivity::class.java)
         startActivity(intent)
     }
 

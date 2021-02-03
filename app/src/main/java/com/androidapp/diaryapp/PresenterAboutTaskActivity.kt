@@ -7,7 +7,7 @@ import io.realm.Realm
 import io.realm.RealmConfiguration
 
 
-class AboutTask:AppCompatActivity() {
+class PresenterAboutTaskActivity:AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about_task)

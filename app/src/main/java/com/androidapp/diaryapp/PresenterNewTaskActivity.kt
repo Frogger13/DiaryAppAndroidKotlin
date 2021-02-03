@@ -14,7 +14,7 @@ import io.realm.RealmConfiguration
 import io.realm.kotlin.createObject
 
 
-class NewTask: AppCompatActivity() {
+class PresenterNewTaskActivity: AppCompatActivity() {
     private lateinit var binding: AppCompatActivity
 
     lateinit var etTaskName:EditText

@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class MyAdapter(listArray:ArrayList<ListItem>, context: Context): RecyclerView.Adapter<MyAdapter.ViewHolder>(){
+class AdapterRcView(listArray:ArrayList<ListItem>, context: Context): RecyclerView.Adapter<AdapterRcView.ViewHolder>(){
     var listArrayR = listArray
     var contextR = context
 
@@ -21,7 +21,7 @@ class MyAdapter(listArray:ArrayList<ListItem>, context: Context): RecyclerView.A
             tvTime.text = listItem.time
             tvText.text = listItem.name
             itemView.setOnClickListener(){
-                var intent = Intent(context, AboutTask::class.java).apply {
+                var intent = Intent(context, PresenterAboutTaskActivity::class.java).apply {
                     putExtra("Time", tvTime.text.toString())
                     putExtra("Name", tvText.text.toString())
                     putExtra("id", listItem.id)
