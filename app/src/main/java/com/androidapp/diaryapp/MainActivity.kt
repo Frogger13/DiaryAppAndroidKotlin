@@ -1,5 +1,4 @@
 package com.androidapp.diaryapp
-
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,14 +9,14 @@ import com.google.firebase.database.DatabaseReference
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import io.realm.kotlin.where
+import java.util.*
 import kotlin.collections.ArrayList
 
-class MainActivity : AppCompatActivity() {
+class MainActivity: AppCompatActivity() {
 
     private lateinit var binding: AppCompatActivity
     private lateinit var database: DatabaseReference
     var adapterRcView:AdapterRcView?=null
-    var selectedDate:String = ""
     var cFCalculator = ComFunCalculator()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,12 +31,12 @@ class MainActivity : AppCompatActivity() {
         val rcViewTime = binding.rcViewTime
 
         calendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
-            selectedDate = "$dayOfMonth-${month + 1}-$year"
-            adapterRcView!!.updateAdapter(updateArrayListItem())
+            var selectedDate = "$dayOfMonth-${month + 1}-$year"
+            adapterRcView!!.updateAdapter(updateArrayListItem(selectedDate))
         }
 
         var list = ArrayList<ListItem>()
-        list.addAll(fillArray(resources.getStringArray(R.array.hours),resources.getStringArray(R.array.descriptions)))
+        list.addAll(updateArrayListItem(cFCalculator.getTodayDate()))
 
         rcViewTime.hasFixedSize()
         rcViewTime.layoutManager = LinearLayoutManager(this)
@@ -54,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         return listitemArray
     }
 
-    fun updateArrayListItem():List<ListItem>{
+    fun updateArrayListItem(selectedDate: String):List<ListItem>{
         var timeArr:Array<String> = resources.getStringArray(R.array.hours)
         val selDateMill = cFCalculator.dateTimeToMillis(selectedDate, null)
         val config = RealmConfiguration.Builder().name("realmDB.realm").build()
@@ -94,24 +93,6 @@ class MainActivity : AppCompatActivity() {
                 listListItem[i].name = ""
             }
         }
-//        for (j in 0 until realmList.size){
-//            timeArr.forEach { time ->
-//                if ((realmList[j]?.date_start == nextHourMill)&&(listListItem[]) ){
-//                        listListItem[listNum].id = realmList[j]?.id!!.toInt()
-//                        listListItem[listNum].time = time
-//                        listListItem[listNum].name = realmList[j]?.name.toString()
-//                        nextHourMill += 3600000
-//                        listNum++
-//            }
-//                else{
-//                    listListItem[listNum].id = null
-//                    listListItem[listNum].time = time
-//                    listListItem[listNum].name = ""
-//                    nextHourMill += 3600000
-//                    listNum++
-//                }
-//            }
-//        }
         return listListItem
     }
 
@@ -128,4 +109,5 @@ class MainActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
 
     }
+
 }

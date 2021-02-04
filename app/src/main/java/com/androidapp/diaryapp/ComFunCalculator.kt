@@ -98,6 +98,14 @@ import java.util.*
         }
     }
 
+     @SuppressLint("SimpleDateFormat")
+     open fun getTodayDate():String{
+         val date = Calendar.getInstance().time
+         val sdf = SimpleDateFormat("dd-MM-yyyy")
+         return sdf.format(date)
+
+     }
+
     open fun getRealmObjects(realm: Realm):String?{
         val obj = realm.where(TaskRealmObjClass::class.java).equalTo("id", 3.toInt()).findAll()
         val out = obj.asJSON()
