@@ -21,7 +21,8 @@ class PresenterAboutTaskActivity:AppCompatActivity() {
         Realm.init(this)
         val config = RealmConfiguration.Builder().name("realmDB.realm").build()
         val realm = Realm.getInstance(config)
-        val task = realm.where(TaskRealmObjClass::class.java).equalTo("id", id).findFirst()!!
-        tvTaskDescriprion.text = task.description
+        val task = realm.where(TaskRealmObjClass::class.java).equalTo("id", id).findFirst()
+        tvTaskDescriprion.text = task?.description
+        realm.close()
     }
 }

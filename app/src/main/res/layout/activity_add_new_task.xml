@@ -6,59 +6,74 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <CalendarView
-        android:id="@+id/calendarViewNewTask"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/calendar_height"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/saveNewTaskButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="Добавить"
-        android:onClick="onClickSaveNewTask"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/etNewTaskName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Название задачи"
-        app:layout_constraintStart_toStartOf="@+id/calendarViewNewTask"
-        app:layout_constraintTop_toBottomOf="@+id/calendarViewNewTask" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/etNewTaskDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Описание"
-        app:layout_constraintEnd_toEndOf="@+id/sNewTaskTime"
-        app:layout_constraintStart_toStartOf="@+id/sNewTaskTime"
-        app:layout_constraintTop_toBottomOf="@+id/sNewTaskTime" />
+            <com.applandeo.materialcalendarview.CalendarView
+                android:id="@+id/calendarViewNewTask"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:headerColor="@color/purple_700"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:selectionColor="@color/teal_700"
+                app:todayLabelColor="#cc0000"
+                app:type="one_day_picker"/>
 
-    <Spinner
-        android:id="@+id/sNewTaskTime"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:entries="@array/hours"
-        app:layout_constraintEnd_toEndOf="@+id/etNewTaskName"
-        app:layout_constraintStart_toStartOf="@+id/etNewTaskName"
-        app:layout_constraintTop_toBottomOf="@+id/etNewTaskName" />
+
+            <EditText
+                android:id="@+id/etNewTaskName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Название задачи"
+                app:layout_constraintStart_toStartOf="@+id/calendarViewNewTask"
+                app:layout_constraintTop_toBottomOf="@+id/calendarViewNewTask" />
+
+            <Spinner
+                android:id="@+id/sNewTaskTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:entries="@array/hours"
+                app:layout_constraintStart_toStartOf="@+id/etNewTaskName"
+                app:layout_constraintTop_toBottomOf="@+id/etNewTaskName" />
+
+            <EditText
+                android:id="@+id/etNewTaskDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Описание"
+                app:layout_constraintEnd_toEndOf="@+id/etNewTaskName"
+                app:layout_constraintStart_toStartOf="@+id/sNewTaskTime"
+                app:layout_constraintTop_toBottomOf="@+id/sNewTaskTime" />
+
+            <Button
+                android:id="@+id/saveNewTaskButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:onClick="onClickSaveNewTask"
+                android:text="Добавить"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/calendarViewNewTask"
+                app:layout_constraintStart_toStartOf="@+id/calendarViewNewTask"
+                app:layout_constraintTop_toBottomOf="@+id/etNewTaskDescription" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

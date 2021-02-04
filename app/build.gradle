@@ -60,6 +60,5 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:0.9.1'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.11.1'
-
-
+    implementation 'com.applandeo:material-calendar-view:1.7.0'
 }

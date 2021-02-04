@@ -3,7 +3,7 @@ package com.androidapp.diaryapp
 
 import android.os.Bundle
 import android.view.View
-import android.widget.CalendarView
+import com.applandeo.materialcalendarview.CalendarView
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
@@ -12,6 +12,7 @@ import com.androidapp.diaryapp.databinding.ActivityAddNewTaskBinding
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import io.realm.kotlin.createObject
+import io.realm.kotlin.where
 
 
 class PresenterNewTaskActivity: AppCompatActivity() {
@@ -20,7 +21,6 @@ class PresenterNewTaskActivity: AppCompatActivity() {
     lateinit var etTaskName:EditText
     lateinit var sTaskTime:Spinner
     lateinit var etTaskDescription:EditText
-    lateinit var calendarViewNewTask: CalendarView
     var selectedDate:String = ""
     var cFCalculator = ComFunCalculator()
 
@@ -38,11 +38,15 @@ class PresenterNewTaskActivity: AppCompatActivity() {
         etTaskName = binding.etNewTaskName
         sTaskTime = binding.sNewTaskTime
         etTaskDescription = binding.etNewTaskDescription
-        calendarViewNewTask = binding.calendarViewNewTask
+        var calendarViewNewTask:CalendarView = findViewById(R.id.calendarViewNewTask)
 
-        calendarViewNewTask.setOnDateChangeListener { view, year, month, dayOfMonth ->
-            selectedDate = "$dayOfMonth-${month + 1}-$year"
+        calendarViewNewTask.setOnDayClickListener{eventDay ->
+            val date = eventDay.calendar.timeInMillis.toString()
+            selectedDate = cFCalculator.millisToDate(date.toLong())
         }
+//        calendarViewNewTask.setOnDateChangeListener { view, year, month, dayOfMonth ->
+//            selectedDate = "$dayOfMonth-${month + 1}-$year"
+//        }
 
     }
     fun onClickSaveNewTask(view: View){
@@ -60,16 +64,18 @@ class PresenterNewTaskActivity: AppCompatActivity() {
         var config = RealmConfiguration.Builder().name("realmDB.realm").build()
         val realm = Realm.getInstance(config)
 
+
         val taskId = cFCalculator.giveId(realm)
         val taskName = etTaskName.text.toString().trim()
         val taskTime = sTaskTime.selectedItem.toString().trim()
-        val taskTimeStart = cFCalculator.dateTimeToMillis(selectedDate, cFCalculator.splitTaskTime(taskTime)[0])
-        var taskTimeFinish:Long
+        val splitedHourList = cFCalculator.splitTaskTime(taskTime)
+        val taskTimeStart = cFCalculator.dateTimeToMillis(selectedDate, splitedHourList[0])
+        val taskTimeFinish:Long
         if (taskTime=="23:00 - 00:00"){
-            taskTimeFinish = cFCalculator.dateTimeToMillis(selectedDate, cFCalculator.splitTaskTime(taskTime)[1])!! + 86400000
+            taskTimeFinish = cFCalculator.dateTimeToMillis(selectedDate, splitedHourList[1])!! + 86400000
         }
         else{
-            taskTimeFinish = cFCalculator.dateTimeToMillis(selectedDate, cFCalculator.splitTaskTime(taskTime)[1])!!
+            taskTimeFinish = cFCalculator.dateTimeToMillis(selectedDate, splitedHourList[1])!!
         }
 
         val taskDescription = etTaskDescription.text.toString().trim()
@@ -79,17 +85,31 @@ class PresenterNewTaskActivity: AppCompatActivity() {
             return
         }
 
+
+        val realmFindResult = realm.where<TaskRealmObjClass>().equalTo("date_start",
+            taskTimeStart).findAll()
         realm.beginTransaction()
-
-        val taskObject = realm.createObject<TaskRealmObjClass>()
-        taskObject.id = taskId
-        taskObject.date_start = taskTimeStart
-        taskObject.date_finish = taskTimeFinish
-        taskObject.name = taskName
-        taskObject.description = taskDescription
-        realm.copyFromRealm(taskObject)
-
+        if (realmFindResult.size==0){
+            val taskObject = realm.createObject<TaskRealmObjClass>()
+            taskObject.id = taskId
+            taskObject.date_start = taskTimeStart
+            taskObject.date_finish = taskTimeFinish
+            taskObject.name = taskName
+            taskObject.description = taskDescription
+            realm.copyFromRealm(taskObject)
+        }else{
+            realmFindResult.deleteAllFromRealm()
+            val taskObject = realm.createObject<TaskRealmObjClass>()
+            taskObject.id = taskId
+            taskObject.date_start = taskTimeStart
+            taskObject.date_finish = taskTimeFinish
+            taskObject.name = taskName
+            taskObject.description = taskDescription
+            realm.copyFromRealm(taskObject)
+        }
         realm.commitTransaction()
+        realm.close()
+
 
 
 
