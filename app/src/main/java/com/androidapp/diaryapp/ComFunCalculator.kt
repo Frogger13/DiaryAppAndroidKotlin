@@ -1,14 +1,14 @@
 package com.androidapp.diaryapp
 
 import android.annotation.SuppressLint
-import android.content.Context
-import com.applandeo.materialcalendarview.EventDay
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import io.realm.Realm
+import io.realm.RealmConfiguration
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Calendar
-import kotlin.collections.ArrayList
 
 
 open class ComFunCalculator {
@@ -131,15 +131,16 @@ open class ComFunCalculator {
          val date = Calendar.getInstance().time
          val sdf = SimpleDateFormat("dd-MM-yyyy")
          return sdf.format(date)
-
      }
-
-
-
-    open fun getRealmObjects(realm: Realm):String?{
-        val obj = realm.where(TaskRealmObjClass::class.java).equalTo("id", 3.toInt()).findAll()
-        val out = obj.asJSON()
-        return out
+    open fun realmToJson(id:Int): String? {
+        val config = RealmConfiguration.Builder().name("realmDB.realm").build()
+        val realm = Realm.getInstance(config)
+        val gson = Gson()
+        val taskRealm = realm.copyFromRealm(realm.where(TaskRealmObjClass::class.java).equalTo("id", id).findFirst())
+        val json = gson.toJson(taskRealm)
+        val gsonPretty = GsonBuilder().setPrettyPrinting().create()
+        val jsonStringPretty:String = gsonPretty.toJson(json)
+        return jsonStringPretty
     }
 }
 

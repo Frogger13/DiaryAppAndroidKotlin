@@ -9,6 +9,8 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.androidapp.diaryapp.databinding.ActivityAddNewTaskBinding
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.Gson
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import io.realm.kotlin.createObject
@@ -23,6 +25,7 @@ class PresenterNewTaskActivity: AppCompatActivity() {
     lateinit var etTaskDescription:EditText
     var selectedDate:String = ""
     var cFCalculator = ComFunCalculator()
+    var firebaseHelper = FirebaseHelper()
 
 
 
@@ -33,6 +36,8 @@ class PresenterNewTaskActivity: AppCompatActivity() {
 
         val binding = ActivityAddNewTaskBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        Realm.init(this)
 
 
         etTaskName = binding.etNewTaskName
@@ -51,7 +56,14 @@ class PresenterNewTaskActivity: AppCompatActivity() {
     }
     fun onClickSaveNewTask(view: View){
         if(selectedDate != "") {
-            saveTask()
+            val savedRealmTaskId = createNewRealmObjGetId()
+            val taskString:String
+            if (savedRealmTaskId!=null){
+                firebaseHelper.saveNewTaskToDatabase(savedRealmTaskId)
+                taskString = cFCalculator.realmToJson(savedRealmTaskId).toString()
+                println(taskString)
+            }
+
         }
         else{
             Toast.makeText(this,"Выберите дату", Toast.LENGTH_SHORT).show()
@@ -59,11 +71,13 @@ class PresenterNewTaskActivity: AppCompatActivity() {
 //        Toast.makeText(this, , Toast.LENGTH_SHORT).show()
     }
 
-    private fun saveTask(){
-        Realm.init(this)
-        var config = RealmConfiguration.Builder().name("realmDB.realm").build()
+    private fun createNewRealmObjGetId():Int?{
+        val config = RealmConfiguration.Builder().name("realmDB.realm").build()
         val realm = Realm.getInstance(config)
 
+        realm.beginTransaction()
+        val taskObject = realm.createObject<TaskRealmObjClass>()
+        realm.commitTransaction()
 
         val taskId = cFCalculator.giveId(realm)
         val taskName = etTaskName.text.toString().trim()
@@ -82,7 +96,7 @@ class PresenterNewTaskActivity: AppCompatActivity() {
 
         if(taskName.isEmpty()){
             etTaskName.error = "Введите название дела"
-            return
+            return null
         }
 
 
@@ -90,7 +104,6 @@ class PresenterNewTaskActivity: AppCompatActivity() {
             taskTimeStart).findAll()
         realm.beginTransaction()
         if (realmFindResult.size==0){
-            val taskObject = realm.createObject<TaskRealmObjClass>()
             taskObject.id = taskId
             taskObject.date_start = taskTimeStart
             taskObject.date_finish = taskTimeFinish
@@ -99,7 +112,6 @@ class PresenterNewTaskActivity: AppCompatActivity() {
             realm.copyFromRealm(taskObject)
         }else{
             realmFindResult.deleteAllFromRealm()
-            val taskObject = realm.createObject<TaskRealmObjClass>()
             taskObject.id = taskId
             taskObject.date_start = taskTimeStart
             taskObject.date_finish = taskTimeFinish
@@ -109,6 +121,8 @@ class PresenterNewTaskActivity: AppCompatActivity() {
         }
         realm.commitTransaction()
         realm.close()
+
+        return taskId
 
 
 

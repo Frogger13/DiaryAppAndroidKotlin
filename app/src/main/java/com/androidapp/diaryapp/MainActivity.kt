@@ -1,25 +1,20 @@
 package com.androidapp.diaryapp
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.DrawableUtils
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.androidapp.diaryapp.databinding.ActivityMainBinding
 import com.applandeo.materialcalendarview.CalendarView
 import com.applandeo.materialcalendarview.EventDay
-import com.google.firebase.database.DatabaseReference
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import io.realm.kotlin.where
+import java.util.*
 import kotlin.collections.ArrayList
-import java.util.Calendar
 
 class MainActivity: AppCompatActivity() {
 
-    private lateinit var binding: AppCompatActivity
-    private lateinit var database: DatabaseReference
     var adapterRcView:AdapterRcView?=null
     var cFCalculator = ComFunCalculator()
 
@@ -46,8 +41,17 @@ class MainActivity: AppCompatActivity() {
         adapterRcView = AdapterRcView(list, this)
         rcViewTime.adapter = adapterRcView
 
-        val events = fillEvents()
-        calendarView.setEvents(events)
+//        val events: List<EventDay> = ArrayList()
+//        val calendar1 = Calendar.getInstance()
+//        calendar1.add(Calendar.DAY_OF_MONTH, 5)
+//        events.toMutableList().add(EventDay(calendar1, R.drawable.ic_dot))
+
+//        val events = fillEvents()
+//        val events = mutableListOf<EventDay>()
+//        val calendar = Calendar.getInstance()
+//        calendar.add(Calendar.DAY_OF_MONTH, 5)
+//        events.add(EventDay(calendar, R.drawable.ic_dot, Color.parseColor("#228B22")))
+//        calendarView.setEvents(events)
     }
 
 //    fun fillArray(timeArray: Array<String>, descriptionArray: Array<String>):List<ListItem>{
@@ -95,6 +99,7 @@ class MainActivity: AppCompatActivity() {
                 }
             }
         }
+        realm.close()
 
 //        for (i in 0 until timeArr.size){
 //            if (realmList.size>0) {
@@ -123,10 +128,7 @@ class MainActivity: AppCompatActivity() {
         realm.close()
         return listListItem
     }
-    fun addingEvents(calendar: Calendar){
-        val events: ArrayList<EventDay>
-//        calendar.events.add()
-    }
+
     fun fillEvents():ArrayList<EventDay>{
         val config = RealmConfiguration.Builder().name("realmDB.realm").build()
         val realm = Realm.getInstance(config)
@@ -135,7 +137,8 @@ class MainActivity: AppCompatActivity() {
         val results = realm.where(TaskRealmObjClass::class.java).findAll()
         for (i in 0 until results.size){
             calendar.timeInMillis = results[i]?.date_start!!
-            events.add(EventDay(calendar,R.drawable.ic_dot))
+            calendar.add(Calendar.DAY_OF_MONTH, 0)
+            events.add(EventDay(calendar, R.drawable.ic_dot))
         }
         realm.close()
         return events
@@ -146,6 +149,7 @@ class MainActivity: AppCompatActivity() {
         val intent = Intent(this, PresenterNewTaskActivity::class.java)
         startActivity(intent)
     }
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState?.run {
