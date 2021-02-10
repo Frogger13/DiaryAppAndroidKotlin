@@ -14,9 +14,9 @@ import java.util.Calendar
 open class ComFunCalculator {
 
      open fun giveId(realm: Realm):Int{
+
          if(!realm.isEmpty) {
-             val unique = realm.where(TaskRealmObjClass::class.java).distinct("id").findAll()
-             val id:Int
+             val unique = realm.where(TaskRealmObjClass::class.java).findAll()
              for (i in 0 until unique.size){
                  if (i==unique[i]?.id){
                      continue
@@ -88,7 +88,7 @@ open class ComFunCalculator {
     @SuppressLint("SimpleDateFormat")
     open fun dateTimeToMillis(dateString: String, timeString: String?):Long? {
         val givenDateString:String
-        var sdf = SimpleDateFormat()
+        var sdf: SimpleDateFormat
         val timeMilliseconds: Long
         if (timeString!=null) {
             givenDateString = "$dateString $timeString"

@@ -17,6 +17,7 @@ class MainActivity: AppCompatActivity() {
 
     var adapterRcView:AdapterRcView?=null
     var cFCalculator = ComFunCalculator()
+    val dbHelper = FirebaseHelper()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +26,13 @@ class MainActivity: AppCompatActivity() {
         setContentView(binding.root)
 
         Realm.init(this)
+        dbHelper.updateRealmDatabase()
 
+//        val config = RealmConfiguration.Builder().name("realmDB.realm").build()
+//        val realm = Realm.getInstance(config)
+//        realm.beginTransaction()
+//        realm.deleteAll()
+//        realm.commitTransaction()
 
         val calendarView:CalendarView = findViewById(R.id.calendarViewActivityMain)
         val rcViewTime = binding.rcViewTasks
@@ -40,6 +47,7 @@ class MainActivity: AppCompatActivity() {
         rcViewTime.layoutManager = LinearLayoutManager(this)
         adapterRcView = AdapterRcView(list, this)
         rcViewTime.adapter = adapterRcView
+
 
 //        val events: List<EventDay> = ArrayList()
 //        val calendar1 = Calendar.getInstance()

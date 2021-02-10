@@ -1,6 +1,8 @@
 package com.androidapp.diaryapp
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import io.realm.Realm
@@ -8,6 +10,7 @@ import io.realm.RealmConfiguration
 
 
 class PresenterAboutTaskActivity:AppCompatActivity() {
+    var firebaseHelper = FirebaseHelper()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about_task)
@@ -24,5 +27,10 @@ class PresenterAboutTaskActivity:AppCompatActivity() {
         val task = realm.where(TaskRealmObjClass::class.java).equalTo("id", id).findFirst()
         tvTaskDescriprion.text = task?.description
         realm.close()
+    }
+    fun onClickDeleteTask(view: View){
+        val id = intent.getIntExtra("id", 0)
+        firebaseHelper.deleteTaskFromDatabase(id)
+        startActivity(Intent(this, MainActivity::class.java))
     }
 }
