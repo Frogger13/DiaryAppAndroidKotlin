@@ -28,6 +28,7 @@ class PresenterNewTaskActivity: AppCompatActivity() {
     var cFCalculator = ComFunCalculator()
     var selectedDate:String = ""
     var firebaseHelper = FirebaseHelper()
+    val config = RealmConfiguration.Builder().name("realmDB.realm").build()
 
 
 
@@ -57,7 +58,8 @@ class PresenterNewTaskActivity: AppCompatActivity() {
 
     fun onClickSaveNewTask(view: View){
         if(selectedDate != "") {
-            val savedRealmTaskId = createNewRealmObjGetId()
+            val realm = Realm.getInstance(config)
+            val savedRealmTaskId = createNewRealmObjGetId(realm)
             if (savedRealmTaskId!=null){
                 firebaseHelper.isNetworkConnected(this)
                 firebaseHelper.saveNewTaskToDatabase(savedRealmTaskId)
@@ -71,10 +73,7 @@ class PresenterNewTaskActivity: AppCompatActivity() {
         }
     }
 
-    private fun createNewRealmObjGetId():Int?{
-        val config = RealmConfiguration.Builder().name("realmDB.realm").build()
-        val realm = Realm.getInstance(config)
-
+    fun createNewRealmObjGetId(realm:Realm):Int?{
         val taskId:Int
         val taskName = etTaskName.text.toString().trim()
         val taskTime = sTaskTime.selectedItem.toString().trim()
