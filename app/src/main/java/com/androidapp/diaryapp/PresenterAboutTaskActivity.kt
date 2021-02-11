@@ -30,6 +30,7 @@ class PresenterAboutTaskActivity:AppCompatActivity() {
     }
     fun onClickDeleteTask(view: View){
         val id = intent.getIntExtra("id", 0)
+        firebaseHelper.isNetworkConnected(this)
         firebaseHelper.deleteTaskFromDatabase(id)
         startActivity(Intent(this, MainActivity::class.java))
     }

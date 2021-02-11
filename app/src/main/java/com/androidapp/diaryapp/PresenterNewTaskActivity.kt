@@ -59,6 +59,7 @@ class PresenterNewTaskActivity: AppCompatActivity() {
         if(selectedDate != "") {
             val savedRealmTaskId = createNewRealmObjGetId()
             if (savedRealmTaskId!=null){
+                firebaseHelper.isNetworkConnected(this)
                 firebaseHelper.saveNewTaskToDatabase(savedRealmTaskId)
                 Toast.makeText(this, "Дело добавлено", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this, MainActivity::class.java))

@@ -17,7 +17,7 @@ class MainActivity: AppCompatActivity() {
 
     var adapterRcView:AdapterRcView?=null
     var cFCalculator = ComFunCalculator()
-    val dbHelper = FirebaseHelper()
+    val firebaseHelper = FirebaseHelper()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +26,7 @@ class MainActivity: AppCompatActivity() {
         setContentView(binding.root)
 
         Realm.init(this)
-        dbHelper.updateRealmDatabase()
+        firebaseHelper.updateRealmDatabase()
 
 //        val config = RealmConfiguration.Builder().name("realmDB.realm").build()
 //        val realm = Realm.getInstance(config)
@@ -42,7 +42,8 @@ class MainActivity: AppCompatActivity() {
             adapterRcView!!.updateAdapter(updateArrayListItem(cFCalculator.millisToDate(selectedDate.toLong())))
         }
         val list = ArrayList<ListItem>()
-        list.addAll(updateArrayListItem(cFCalculator.getTodayDate()))
+        val listItem = cFCalculator.getTodayDate()
+        list.addAll(updateArrayListItem(listItem))
         rcViewTime.hasFixedSize()
         rcViewTime.layoutManager = LinearLayoutManager(this)
         adapterRcView = AdapterRcView(list, this)
@@ -77,6 +78,7 @@ class MainActivity: AppCompatActivity() {
         val config = RealmConfiguration.Builder().name("realmDB.realm").build()
         val realm = Realm.getInstance(config)
 
+        firebaseHelper.updateRealmDatabase()
 
         val realmResults = realm.where<TaskRealmObjClass>().between("date_start",
             selDateMill!!, (selDateMill + 86400000 - 1)).findAll()
@@ -95,8 +97,8 @@ class MainActivity: AppCompatActivity() {
         for (j in 0 until realmList.size) {
             nextHourMill = selDateMill
             for (i in 0 until timeArr.size){
-                if (realmList[j]?.date_start == nextHourMill) {
-                    listListItem[i].id = realmList[j].id!!.toInt()
+                if (realmList[j].date_start == nextHourMill) {
+                    listListItem[i].id = realmList[j].id
                     listListItem[i].time = timeArr[i]
                     listListItem[i].name = realmList[j].name.toString()
                     nextHourMill += 3600000
@@ -107,32 +109,6 @@ class MainActivity: AppCompatActivity() {
                 }
             }
         }
-        realm.close()
-
-//        for (i in 0 until timeArr.size){
-//            if (realmList.size>0) {
-//                for (j in 0 until realmList.size) {
-//                    if (realmList[j]?.date_start == nextHourMill) {
-//                        listListItem[i].id = realmList[j].id!!.toInt()
-//                        listListItem[i].time = timeArr[i]
-//                        listListItem[i].name = realmList[j].name.toString()
-//                        nextHourMill += 3600000
-//                        realmList.remove(realmList[j])
-//                        break
-//                    } else if (listListItem[i].id != null) {
-//                        listListItem[i].id = null
-//                        listListItem[i].time = timeArr[i]
-//                        listListItem[i].name = ""
-//                        nextHourMill += 3600000
-//                    }
-//                }
-//            }else{
-//                listListItem[i].id = null
-//                listListItem[i].time = timeArr[i]
-//                listListItem[i].name = ""
-//                nextHourMill += 3600000
-//            }
-//        }
         realm.close()
         return listListItem
     }
