@@ -73,23 +73,23 @@ class PresenterNewTaskActivity: AppCompatActivity() {
         }
     }
 
-    fun createNewRealmObjGetId(realm:Realm):Int?{
-        val taskId:Int
+    fun createNewRealmObjGetId(realm:Realm):Int? {
+        val taskId: Int
         val taskName = etTaskName.text.toString().trim()
         val taskTime = sTaskTime.selectedItem.toString().trim()
         val splitedHourList = cFCalculator.splitTaskTime(taskTime)
         val taskTimeStart = cFCalculator.dateTimeToMillis(selectedDate, splitedHourList[0])
-        val taskTimeFinish:Long
-        if (taskTime=="23:00 - 00:00"){
-            taskTimeFinish = cFCalculator.dateTimeToMillis(selectedDate, splitedHourList[1])!! + 86400000
-        }
-        else{
+        val taskTimeFinish: Long
+        if (taskTime == "23:00 - 00:00") {
+            taskTimeFinish =
+                cFCalculator.dateTimeToMillis(selectedDate, splitedHourList[1])!! + 86400000
+        } else {
             taskTimeFinish = cFCalculator.dateTimeToMillis(selectedDate, splitedHourList[1])!!
         }
 
         val taskDescription = etTaskDescription.text.toString().trim()
 
-        if(taskName.isEmpty()){
+        if (taskName.isEmpty()) {
             etTaskName.error = "Введите название дела"
             return null
         }
@@ -98,7 +98,7 @@ class PresenterNewTaskActivity: AppCompatActivity() {
         val realmFindResult = realm.where<TaskRealmObjClass>().equalTo("date_start",
             taskTimeStart).findAll()
         realm.beginTransaction()
-        if (realmFindResult.size==0){
+        if (realmFindResult.size == 0) {
             taskId = cFCalculator.giveId(realm)
             val taskObject = realm.createObject<TaskRealmObjClass>()
             taskObject.id = taskId
@@ -107,7 +107,7 @@ class PresenterNewTaskActivity: AppCompatActivity() {
             taskObject.name = taskName
             taskObject.description = taskDescription
             realm.copyFromRealm(taskObject)
-        }else {
+        } else {
             realmFindResult.deleteAllFromRealm()
             taskId = cFCalculator.giveId(realm)
             val taskObject = realm.createObject<TaskRealmObjClass>()
@@ -124,37 +124,7 @@ class PresenterNewTaskActivity: AppCompatActivity() {
         return taskId
 
 
-
-
-//        val task = TaskKotlinClass(0, taskTimeStart, taskTimeFinish, taskName, taskDescription)
-//        val jsonString = GsonBuilder().setPrettyPrinting().create().toJson(task.toJSON())
-
-
-//        val jsonString = ObjectMapper().writeValueAsString(task)
-//        val imputStream = assets.open(dataFileName)
-//        val gson = Gson()
-//        try{
-//            val fileOutputStream:FileOutputStream = context.openFileOutput(dataFileName)
-//        }
-//        val jsonList = gson.toJson(jsonString)
-//        File("Database.json").writeText(jsonList)
-
-
-//        val gsonPretty = GsonBuilder().setPrettyPrinting().create()
-//        val jsonStringPretty:String = gsonPretty.toJson(jsonObjTask)
-//        jsonWriter(jsonStringPretty)
-
     }
-
-
-//    private fun createRealmObj(id:Int, date_start:String, date_finish:String, name:String, description:String){
-//        val realm = Realm.getInstance(config)
-//        val task = TaskRealmObjClass(id, date_start, date_finish, name, description)
-//        realm.copyToRealm(task)
-//        realm.close()
-//    }
-
-
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState?.run {

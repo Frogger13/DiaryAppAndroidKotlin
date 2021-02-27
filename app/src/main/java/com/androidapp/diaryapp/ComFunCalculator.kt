@@ -32,49 +32,6 @@ open class ComFunCalculator {
          return lastId
      }
 
-//    open fun getJsonString(context:Context):String {
-
-
-//        var json = String()
-//            val  inputStream:InputStream = assets.open(dataFileName)
-//            json = inputStream.bufferedReader().use{it.readText()}
-//        return json
-
-
-//        val file = File(context.filesDir, dataFileName)
-//        val fileReader = FileReader(file)
-//        val bufferedReader = BufferedReader(fileReader)
-//        val stringBuilder = StringBuilder()
-//        var line = bufferedReader.readLine()
-//        while(line!=null){
-//            stringBuilder.append(line).append("\n")
-//            line = bufferedReader.readLine()
-//        }
-//        bufferedReader.close()
-//        return stringBuilder.toString()
-
-//        val file = R.raw.data
-//        val reader = context.resources.openRawResource(file).reader()
-//        val jsonString = reader.readText()
-//        return jsonString
-
-
-//        val file = File("src/data.json")
-//        println("Attempting to read from file in: "+ Environment.getDataDirectory())
-//        try {
-//            val reader = file.canonicalFile.reader()
-//        }catch (e:IOException){
-//            e.printStackTrace()
-//        }
-//        return ""
-//    }
-
-//    private fun jsonWriter(jsonString:String){
-//        var fileOutput = openFileOutput(dataFileName, MODE_PRIVATE)
-//        val outputWriter = OutputStreamWriter(fileOutput)
-//        outputWriter.write(jsonString)
-//        outputWriter.close()
-//    }
 
     open fun splitTaskTime(rangeString: String): List<String> {
         val listHours = rangeString.split("-")

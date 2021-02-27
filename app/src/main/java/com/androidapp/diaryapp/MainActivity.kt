@@ -26,18 +26,12 @@ class MainActivity: AppCompatActivity() {
         setContentView(binding.root)
 
         Realm.init(this)
-        firebaseHelper.updateRealmDatabase()
 
-//        val config = RealmConfiguration.Builder().name("realmDB.realm").build()
-//        val realm = Realm.getInstance(config)
-//        realm.beginTransaction()
-//        realm.deleteAll()
-//        realm.commitTransaction()
 
-        val calendarView:CalendarView = findViewById(R.id.calendarViewActivityMain)
+        val calendarView: CalendarView = findViewById(R.id.calendarViewActivityMain)
         val rcViewTime = binding.rcViewTasks
-        var selectedDate:String
-        calendarView.setOnDayClickListener{ eventDay ->
+        var selectedDate: String
+        calendarView.setOnDayClickListener { eventDay ->
             selectedDate = eventDay.calendar.timeInMillis.toString()
             adapterRcView!!.updateAdapter(updateArrayListItem(cFCalculator.millisToDate(selectedDate.toLong())))
         }
@@ -48,29 +42,7 @@ class MainActivity: AppCompatActivity() {
         rcViewTime.layoutManager = LinearLayoutManager(this)
         adapterRcView = AdapterRcView(list, this)
         rcViewTime.adapter = adapterRcView
-
-
-//        val events: List<EventDay> = ArrayList()
-//        val calendar1 = Calendar.getInstance()
-//        calendar1.add(Calendar.DAY_OF_MONTH, 5)
-//        events.toMutableList().add(EventDay(calendar1, R.drawable.ic_dot))
-
-//        val events = fillEvents()
-//        val events = mutableListOf<EventDay>()
-//        val calendar = Calendar.getInstance()
-//        calendar.add(Calendar.DAY_OF_MONTH, 5)
-//        events.add(EventDay(calendar, R.drawable.ic_dot, Color.parseColor("#228B22")))
-//        calendarView.setEvents(events)
     }
-
-//    fun fillArray(timeArray: Array<String>, descriptionArray: Array<String>):List<ListItem>{
-//        var listitemArray = ArrayList<ListItem>()
-//        for(n in 0..timeArray.size-1){
-//            var listItem = ListItem(timeArray[n], descriptionArray[n])
-//            listitemArray.add(listItem)
-//        }
-//        return listitemArray
-//    }
 
     fun updateArrayListItem(selectedDate: String):List<ListItem>{
         val timeArr:Array<String> = resources.getStringArray(R.array.hours)
@@ -79,6 +51,7 @@ class MainActivity: AppCompatActivity() {
         val realm = Realm.getInstance(config)
 
         firebaseHelper.updateRealmDatabase()
+        firebaseHelper.isNetworkConnected(this)
 
         val realmResults = realm.where<TaskRealmObjClass>().between("date_start",
             selDateMill!!, (selDateMill + 86400000 - 1)).findAll()
