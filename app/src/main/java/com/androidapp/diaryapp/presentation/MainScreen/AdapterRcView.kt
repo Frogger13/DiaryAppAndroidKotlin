@@ -1,4 +1,4 @@
-package com.androidapp.diaryapp
+package com.androidapp.diaryapp.presentation.MainScreen
 
 import android.content.Context
 import android.content.Intent
@@ -7,9 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.androidapp.diaryapp.models.ListItemModel
+import com.androidapp.diaryapp.R
+import com.androidapp.diaryapp.presentation.AboutTaskScreen.PresenterAboutTaskActivity
 
-class AdapterRcView(listArray:ArrayList<ListItem>, context: Context): RecyclerView.Adapter<AdapterRcView.ViewHolder>(){
-    var listArrayR = listArray
+class AdapterRcView(listArrayModel:ArrayList<ListItemModel>, context: Context): RecyclerView.Adapter<AdapterRcView.ViewHolder>(){
+    var listArrayR = listArrayModel
     var contextR = context
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
@@ -17,14 +20,14 @@ class AdapterRcView(listArray:ArrayList<ListItem>, context: Context): RecyclerVi
         val tvTime = view.findViewById<TextView>(R.id.tvTime)
         val tvText = view.findViewById<TextView>(R.id.tvText)
 
-        fun bind(listItem: ListItem,context: Context){
-            tvTime.text = listItem.time
-            tvText.text = listItem.name
+        fun bind(listItemModel: ListItemModel, context: Context){
+            tvTime.text = listItemModel.time
+            tvText.text = listItemModel.name
             itemView.setOnClickListener(){
                 var intent = Intent(context, PresenterAboutTaskActivity::class.java).apply {
                     putExtra("Time", tvTime.text.toString())
                     putExtra("Name", tvText.text.toString())
-                    putExtra("id", listItem.id)
+                    putExtra("id", listItemModel.id)
                 }
                 context.startActivity(intent)
 
@@ -47,9 +50,9 @@ class AdapterRcView(listArray:ArrayList<ListItem>, context: Context): RecyclerVi
         return listArrayR.size
     }
 
-    fun updateAdapter(listArray: List<ListItem>){
+    fun updateAdapter(listArrayModel: List<ListItemModel>){
         listArrayR.clear()
-        listArrayR.addAll(listArray)
+        listArrayR.addAll(listArrayModel)
         notifyDataSetChanged()
     }
 }

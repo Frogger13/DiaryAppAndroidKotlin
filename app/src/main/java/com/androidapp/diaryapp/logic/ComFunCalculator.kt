@@ -1,6 +1,7 @@
-package com.androidapp.diaryapp
+package com.androidapp.diaryapp.logic
 
 import android.annotation.SuppressLint
+import com.androidapp.diaryapp.models.TaskRealmModel
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.realm.Realm
@@ -16,7 +17,7 @@ open class ComFunCalculator {
      open fun giveId(realm: Realm):Int{
 
          if(!realm.isEmpty) {
-             val unique = realm.where(TaskRealmObjClass::class.java).findAll()
+             val unique = realm.where(TaskRealmModel::class.java).findAll()
              for (i in 0 until unique.size){
                  if (i==unique[i]?.id){
                      continue
@@ -28,7 +29,7 @@ open class ComFunCalculator {
          }else{
              return 0
          }
-         val lastId = (realm.where(TaskRealmObjClass::class.java).findAll()).size
+         val lastId = (realm.where(TaskRealmModel::class.java).findAll()).size
          return lastId
      }
 
@@ -90,10 +91,10 @@ open class ComFunCalculator {
          return sdf.format(date)
      }
     open fun realmToJson(id:Int): String? {
-        val config = RealmConfiguration.Builder().name("realmDB.realm").build()
+        val config = RealmConfiguration.Builder().name("database.realm").build()
         val realm = Realm.getInstance(config)
         val gson = Gson()
-        val taskRealm = realm.copyFromRealm(realm.where(TaskRealmObjClass::class.java).equalTo("id", id).findFirst())
+        val taskRealm = realm.copyFromRealm(realm.where(TaskRealmModel::class.java).equalTo("id", id).findFirst())
         val json = gson.toJson(taskRealm)
         val gsonPretty = GsonBuilder().setPrettyPrinting().create()
         val jsonStringPretty:String = gsonPretty.toJson(json)

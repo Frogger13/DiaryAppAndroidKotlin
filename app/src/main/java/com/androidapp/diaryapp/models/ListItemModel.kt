@@ -1,6 +1,6 @@
-package com.androidapp.diaryapp
+package com.androidapp.diaryapp.models
 
- class ListItem {
+ class ListItemModel {
     var id:Int? = 0
     var time: String = ""
     var name: String = ""

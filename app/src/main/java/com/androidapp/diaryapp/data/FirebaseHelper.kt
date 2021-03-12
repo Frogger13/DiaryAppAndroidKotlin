@@ -1,9 +1,10 @@
-package com.androidapp.diaryapp
+package com.androidapp.diaryapp.data
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
+import com.androidapp.diaryapp.models.TaskModel
+import com.androidapp.diaryapp.models.TaskRealmModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -20,13 +21,12 @@ class FirebaseHelper {
 
     @SuppressLint("RestrictedApi")
     fun saveNewTaskToDatabase(id: Int?) {
-        val config = RealmConfiguration.Builder().name("realmDB.realm").build()
+        val config = RealmConfiguration.Builder().name("database.realm").build()
         val realm = Realm.getInstance(config)
-
         val taskRealm =
-            realm.copyFromRealm(realm.where(TaskRealmObjClass::class.java).equalTo("id", id)
+            realm.copyFromRealm(realm.where(TaskRealmModel::class.java).equalTo("id", id)
                 .findFirst())
-        val task = TaskKotlinClass(taskRealm?.id,
+        val task = TaskModel(taskRealm?.id,
             taskRealm?.date_start,
             taskRealm?.date_finish,
             taskRealm?.name,
@@ -36,7 +36,7 @@ class FirebaseHelper {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     for (h in snapshot.children) {
-                        val firebaseTask = h.getValue(TaskKotlinClass::class.java)
+                        val firebaseTask = h.getValue(TaskModel::class.java)
                         if (firebaseTask?.id == id) {
                             database.child(h.key.toString()).child("date_start")
                                 .setValue(task.date_start?.toLong())
@@ -66,7 +66,7 @@ class FirebaseHelper {
     fun updateRealmDatabase() {
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val config = RealmConfiguration.Builder().name("realmDB.realm").build()
+                val config = RealmConfiguration.Builder().name("database.realm").build()
                 val realm = Realm.getInstance(config)
                 realm.beginTransaction()
                 realm.deleteAll()
@@ -74,8 +74,8 @@ class FirebaseHelper {
                     if (snapshot.exists()) {
                         for (h in snapshot.children) {
                             realm.beginTransaction()
-                            val task = h.getValue(TaskKotlinClass::class.java)
-                            val taskObject = realm.createObject<TaskRealmObjClass>()
+                            val task = h.getValue(TaskModel::class.java)
+                            val taskObject = realm.createObject<TaskRealmModel>()
                             taskObject.id = task?.id
                             taskObject.date_start = task?.date_start
                             taskObject.date_finish = task?.date_finish
@@ -98,14 +98,14 @@ class FirebaseHelper {
     }
 
     fun deleteTaskFromDatabase(id: Int?) {
-        val config = RealmConfiguration.Builder().name("realmDB.realm").build()
+        val config = RealmConfiguration.Builder().name("database.realm").build()
         val realm = Realm.getInstance(config)
 
             database.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         for (h in snapshot.children) {
-                            val firebaseTask = h.getValue(TaskKotlinClass::class.java)
+                            val firebaseTask = h.getValue(TaskModel::class.java)
                             if (firebaseTask?.id == id) {
                                 database.child(h.key.toString()).setValue(null)
                             }
@@ -120,7 +120,7 @@ class FirebaseHelper {
                 }
             })
         realm.beginTransaction()
-        realm.where(TaskRealmObjClass::class.java).equalTo("id", id).findFirst()?.deleteFromRealm()
+        realm.where(TaskRealmModel::class.java).equalTo("id", id).findFirst()?.deleteFromRealm()
         realm.commitTransaction()
         realm.close()
     }

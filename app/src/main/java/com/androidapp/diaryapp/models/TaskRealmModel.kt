@@ -1,9 +1,9 @@
-package com.androidapp.diaryapp
+package com.androidapp.diaryapp.models
 
 import io.realm.RealmObject
 import org.bson.types.ObjectId
 
-open class TaskRealmObjClass(
+open class TaskRealmModel(
     var id: Int? = 0,
     var date_start:Long? = 0,
     var date_finish:Long? = 0,

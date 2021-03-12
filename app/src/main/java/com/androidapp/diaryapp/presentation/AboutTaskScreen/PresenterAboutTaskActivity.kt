@@ -1,10 +1,14 @@
-package com.androidapp.diaryapp
+package com.androidapp.diaryapp.presentation.AboutTaskScreen
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.androidapp.diaryapp.data.FirebaseHelper
+import com.androidapp.diaryapp.presentation.MainScreen.MainActivity
+import com.androidapp.diaryapp.R
+import com.androidapp.diaryapp.models.TaskRealmModel
 import io.realm.Realm
 import io.realm.RealmConfiguration
 
@@ -22,9 +26,9 @@ class PresenterAboutTaskActivity:AppCompatActivity() {
         tvTaskTime.text = intent.getStringExtra("Time")
         tvTaskName.text = intent.getStringExtra("Name")
         Realm.init(this)
-        val config = RealmConfiguration.Builder().name("realmDB.realm").build()
+        val config = RealmConfiguration.Builder().name("database.realm").build()
         val realm = Realm.getInstance(config)
-        val task = realm.where(TaskRealmObjClass::class.java).equalTo("id", id).findFirst()
+        val task = realm.where(TaskRealmModel::class.java).equalTo("id", id).findFirst()
         tvTaskDescriprion.text = task?.description
         realm.close()
     }

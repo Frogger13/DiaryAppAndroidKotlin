@@ -3,7 +3,8 @@ package com.androidapp.diaryapp
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
+import com.androidapp.diaryapp.logic.ComFunCalculator
+import com.androidapp.diaryapp.models.TaskRealmModel
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import org.junit.Assert
@@ -41,7 +42,7 @@ class DiaryAppTestnig {
         val realm = Realm.getInstance(config)
         realm.beginTransaction()
         realm.deleteAll()
-        realm.copyToRealm(TaskRealmObjClass(0, 0, 0, "", ""))
+        realm.copyToRealm(TaskRealmModel(0, 0, 0, "", ""))
         realm.commitTransaction()
 
 

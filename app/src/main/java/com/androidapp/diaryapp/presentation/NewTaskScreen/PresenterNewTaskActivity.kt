@@ -1,4 +1,4 @@
-package com.androidapp.diaryapp
+package com.androidapp.diaryapp.presentation.NewTaskScreen
 
 
 import android.content.Intent
@@ -9,14 +9,16 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.androidapp.diaryapp.logic.ComFunCalculator
+import com.androidapp.diaryapp.data.FirebaseHelper
+import com.androidapp.diaryapp.presentation.MainScreen.MainActivity
+import com.androidapp.diaryapp.R
 import com.androidapp.diaryapp.databinding.ActivityAddNewTaskBinding
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.gson.Gson
+import com.androidapp.diaryapp.models.TaskRealmModel
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import io.realm.kotlin.createObject
 import io.realm.kotlin.where
-import java.sql.Date
 import java.util.*
 
 
@@ -28,7 +30,7 @@ class PresenterNewTaskActivity: AppCompatActivity() {
     var cFCalculator = ComFunCalculator()
     var selectedDate:String = ""
     var firebaseHelper = FirebaseHelper()
-    val config = RealmConfiguration.Builder().name("realmDB.realm").build()
+    val config = RealmConfiguration.Builder().name("database.realm").build()
 
 
 
@@ -95,12 +97,12 @@ class PresenterNewTaskActivity: AppCompatActivity() {
         }
 
 
-        val realmFindResult = realm.where<TaskRealmObjClass>().equalTo("date_start",
+        val realmFindResult = realm.where<TaskRealmModel>().equalTo("date_start",
             taskTimeStart).findAll()
         realm.beginTransaction()
         if (realmFindResult.size == 0) {
             taskId = cFCalculator.giveId(realm)
-            val taskObject = realm.createObject<TaskRealmObjClass>()
+            val taskObject = realm.createObject<TaskRealmModel>()
             taskObject.id = taskId
             taskObject.date_start = taskTimeStart
             taskObject.date_finish = taskTimeFinish
@@ -110,7 +112,7 @@ class PresenterNewTaskActivity: AppCompatActivity() {
         } else {
             realmFindResult.deleteAllFromRealm()
             taskId = cFCalculator.giveId(realm)
-            val taskObject = realm.createObject<TaskRealmObjClass>()
+            val taskObject = realm.createObject<TaskRealmModel>()
             taskObject.id = taskId
             taskObject.date_start = taskTimeStart
             taskObject.date_finish = taskTimeFinish

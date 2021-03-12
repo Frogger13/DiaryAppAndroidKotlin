@@ -12,7 +12,7 @@
         android:theme="@style/Theme.DiaryApp"
         tools:ignore="ExtraText">
         <activity
-            android:name=".MainActivity"
+            android:name=".presentation.MainScreen.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,10 +21,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".PresenterNewTaskActivity"
+            android:name="com.androidapp.diaryapp.presentation.NewTaskScreen.PresenterNewTaskActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".PresenterAboutTaskActivity"
+            android:name=".presentation.AboutTaskScreen.PresenterAboutTaskActivity"
             android:screenOrientation="portrait"/>
     </application>
 

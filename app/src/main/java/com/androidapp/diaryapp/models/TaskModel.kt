@@ -1,8 +1,8 @@
-package com.androidapp.diaryapp
+package com.androidapp.diaryapp.models
 
 import org.json.JSONObject
 
-class TaskKotlinClass{
+class TaskModel{
     var id: Int? = null
     var date_start: Long? = null
     var date_finish: Long? = null
